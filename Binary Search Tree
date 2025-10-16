@@ -33,3 +33,93 @@ Node* insert(Node* root, int value) {
     }
     return root;
 }
+// Function to find the minimum value node in a BST
+Node* findMin(Node* node) {
+    Node* current = node;
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+    return current;
+}
+
+// Function to delete a node from a BST
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) {
+        return root;
+    }
+    
+    // Recurse down the tree to find the node
+    if (value < root->data) {
+        root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+        root->right = deleteNode(root->right, value);
+    } else { // Node to be deleted found
+        // Case 1: Node has no children or one child
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+        
+        // Case 2: Node has two children
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+// In-order traversal of the BST
+void inorderTraversal(Node* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+// Main function to test the BST operations
+int main() {
+    Node* root = NULL;
+    
+    // Insert nodes
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+    
+    printf("Initial BST in-order traversal: ");
+    inorderTraversal(root);
+    printf("\n");
+    
+    
+    // Delete a leaf node (20)
+    root = deleteNode(root, 20);
+    printf("BST after deleting 20: ");
+    inorderTraversal(root);
+    printf("\n");
+    
+    // Delete a node with one child (30)
+    root = deleteNode(root, 30);
+    printf("BST after deleting 30: ");
+    inorderTraversal(root);
+    printf("\n");
+    
+    // Delete a node with two children (50 - root)
+    root = deleteNode(root, 50);
+    printf("BST after deleting 50: ");
+    inorderTraversal(root);
+    printf("\n");
+    
+    // Clean up memory (simple approach)
+    // In a real application, you'd want a proper post-order traversal to free all nodes
+    return 0;
+}
+
